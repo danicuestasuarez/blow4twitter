@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.trabajo.sdm.blow">
+    package="com.trabajo.sdm.blow" >
 
     <!-- Permission - Internet Connect -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -11,23 +11,27 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:label="@string/app_name" >
         </activity>
-        <activity android:name=".WebView" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="37ce2c2f8d6518decc9aa6cc9994e7dab12e9dc6" />
 
-        <activity android:name=".ListTwits"></activity>
+        <activity android:name=".ListTwits" />
+        <activity
+            android:name=".LoginActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_login"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

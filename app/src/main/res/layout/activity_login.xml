@@ -1,0 +1,30 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="#05d7bf"
+    tools:context="com.trabajo.sdm.blow.LoginActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#05ffe5"
+        android:textStyle="bold" android:textSize="50sp" android:gravity="center"
+        android:text="@string/welcome"
+        android:layout_marginBottom="200dp" />
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout android:id="@+id/sessionContainer" android:layout_width="match_parent"
+                android:layout_height="match_parent"  android:fitsSystemWindows="true"
+        android:layout_marginBottom="200px">
+
+         <com.twitter.sdk.android.core.identity.TwitterLoginButton
+             android:id="@+id/twitter_login_button"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerInParent="true"
+             android:layout_gravity="bottom|center_horizontal"
+             android:layout_marginBottom="150px" />
+
+    </FrameLayout>
+</FrameLayout>
