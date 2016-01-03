@@ -1,10 +1,6 @@
 <resources>
     <string name="app_name">Blow</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -15,7 +11,13 @@
     <string name="btIdentificate">Accede con Twitter</string>
 
     <string name="title_activity_login">LoginActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="welcome">WELCOME TO BLOW</string>
+
+
+    <string name="openDrawer">Menu abierto</string>
+    <string name="closeDrawer">Menu cerrado</string>
+
+    <string name="title_sectionTweets">Tweets</string>
+    <string name="title_sectionNoSeguidores">No me siguen</string>
+    <string name="title_sectionInfluenciasMundiales">Influencias Mundiales</string>
 </resources>

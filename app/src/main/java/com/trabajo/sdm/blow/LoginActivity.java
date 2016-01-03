@@ -8,15 +8,10 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Toast;
 
 import io.fabric.sdk.android.Fabric;
@@ -45,14 +40,15 @@ public class LoginActivity extends Activity {
                 // Twitter.getInstance().core.getSessionManager().getActiveSession()
                 TwitterSession session = result.data;
                 // TODO: Remove toast and use the TwitterSession's userID
-                // with your app's user model
                 String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                finish();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 // TODO: Add twitter keys to access the api of the user in extras.
+                Bundle bundle = new Bundle();
+                intent.putExtras(bundle);
                 startActivity(intent);
+                finish();
             }
 
             @Override
