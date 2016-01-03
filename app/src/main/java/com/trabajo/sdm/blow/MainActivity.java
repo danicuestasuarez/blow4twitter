@@ -1,5 +1,6 @@
 package com.trabajo.sdm.blow;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 .verifyCredentials(false, true, new com.twitter.sdk.android.core.Callback<User>() {
                     @Override
                     public void failure(TwitterException e) {
-
                     }
 
                     @Override
