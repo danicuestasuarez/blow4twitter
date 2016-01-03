@@ -21,11 +21,10 @@
             android:name="io.fabric.ApiKey"
             android:value="37ce2c2f8d6518decc9aa6cc9994e7dab12e9dc6" />
 
-        <activity android:name=".ListTwits" />
         <activity
             android:name=".LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_login"
+            android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -20,12 +20,55 @@
         android:background="@android:color/white"
         android:orientation="vertical">
 
-        <ImageView
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/blow"
-            android:background="#05d7bf"
-            android:scaleType="centerCrop" />
+            android:background="@drawable/blowdark"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="vertical"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="#ffffff"
+                    android:text="Nombre"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:id="@+id/biografia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Biografia aquí"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+
+                    />
+            </LinearLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/blowdark"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:id="@+id/circleView"
+                />
+        </RelativeLayout>
 
         <ListView
             android:id="@+id/navdrawerlist"

@@ -7,7 +7,7 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
     <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#6bffe1"
+        android:layout_height="match_parent" android:keepScreenOn="true" android:textColor="#b9ffeb"
         android:textStyle="bold" android:textSize="50sp" android:gravity="center"
         android:text="@string/welcome"
         android:layout_marginBottom="200dp" />

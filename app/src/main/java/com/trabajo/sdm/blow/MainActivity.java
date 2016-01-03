@@ -1,7 +1,9 @@
 package com.trabajo.sdm.blow;
 
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +15,22 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.User;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit.Callback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private ListView ndList;
+
+
+    TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +60,42 @@ public class MainActivity extends AppCompatActivity {
 
         ndList = (ListView)findViewById(R.id.navdrawerlist);
 
-        final String[] opciones = new String[]{"Sección 1", "Sección 2", "Sección 3"};
+
+        Twitter.getApiClient(session).getAccountService()
+                .verifyCredentials(false, true, new com.twitter.sdk.android.core.Callback<User>() {
+                    @Override
+                    public void failure(TwitterException e) {
+
+                    }
+
+                    @Override
+                    public void success(Result<User> userResult) {
+
+                        User user = userResult.data;
+                        CircleImageView profileImg = (CircleImageView) findViewById(R.id.circleView);
+                        TextView name = (TextView) findViewById(R.id.name);
+                        TextView bio = (TextView) findViewById(R.id.biografia);
+                        URL url;
+                        try {
+                            if (android.os.Build.VERSION.SDK_INT > 9) {
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
+                            }
+                            url = new URL(user.profileImageUrl.replace("normal","bigger"));
+                            profileImg.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
+                            name.setText(user.name + ": @" + session.getUserName());
+                            bio.setText(user.description);
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                });
+
+        final String[] opciones = new String[]{"Tweets", "Quién no me sigue", "Influencias mundiales"};
 
         ArrayAdapter<String> ndMenuAdapter =
                 new ArrayAdapter<>(this,
