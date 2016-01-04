@@ -1,6 +1,6 @@
 package com.trabajo.sdm.blow;
 
-import android.content.Intent;
+
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -18,10 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.trabajo.sdm.blow.modules.NoFollowerFragment;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterApiClient;
-import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.User;
@@ -31,9 +30,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit.Callback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
     private ScrimInsetsFrameLayout sifl;
@@ -114,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         //fragment = new Fragment1();
                         break;
                     case 1:
-                        //fragment = new Fragment2();
+                        fragment = new NoFollowerFragment();
                         break;
                     case 2:
                         //fragment = new Fragment3();
