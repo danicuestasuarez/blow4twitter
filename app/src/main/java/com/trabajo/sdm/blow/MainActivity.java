@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.trabajo.sdm.blow.modules.MapTrendsFragment;
 import com.trabajo.sdm.blow.modules.NoFollowerFragment;
 import com.trabajo.sdm.blow.modules.TweetsFragment;
 import com.twitter.sdk.android.Twitter;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity{
 
         ArrayAdapter<String> ndMenuAdapter =
                 new ArrayAdapter<>(this,
-                        android.R.layout.simple_list_item_activated_1, opciones);
+                        R.layout.simple_menu_list_item, opciones);
 
         ndList.setAdapter(ndMenuAdapter);
 
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity{
                         fragment = new NoFollowerFragment();
                         break;
                     case 2:
-                        //fragment = new Fragment3();
+                        fragment = new MapTrendsFragment();
                         break;
                 }
 

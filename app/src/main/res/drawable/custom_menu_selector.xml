@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/color_slide_menu_item_pressed" />
+        </shape>
+    </item>
+
+    <item android:state_activated="true">
+        <shape>
+            <solid android:color="@color/color_slide_menu_item_activated" />
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <solid android:color="@color/color_main_theme_background" />
+        </shape>
+    </item>
+</selector>
