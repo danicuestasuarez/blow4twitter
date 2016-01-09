@@ -6,7 +6,10 @@
     <ListView android:id="@android:id/list" android:layout_width="match_parent"
         android:layout_height="match_parent" android:descendantFocusability="blocksDescendants" android:focusable="false"/>
 
+<<<<<<< HEAD
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
         android:layout_height="match_parent" android:gravity="center"/>
 
+=======
+>>>>>>> origin/master
 </FrameLayout>

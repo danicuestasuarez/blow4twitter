@@ -18,7 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.trabajo.sdm.blow.modules.MapTrendsFragment;
 import com.trabajo.sdm.blow.modules.NoFollowerFragment;
+import com.trabajo.sdm.blow.modules.TweetsFragment;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -26,7 +28,6 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.User;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -51,8 +52,7 @@ public class MainActivity extends AppCompatActivity{
         sifl = (ScrimInsetsFrameLayout)findViewById(R.id.scrimInsetsFrameLayout);
 
         //Toolbar
-
-        toolbar = (Toolbar) findViewById(R.id.appbar);
+        toolbar  = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
 
         //Menu del Navigation Drawer
@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity{
                             profileImg.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
                             name.setText(user.name + ": @" + session.getUserName());
                             bio.setText(user.description);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity{
 
         ArrayAdapter<String> ndMenuAdapter =
                 new ArrayAdapter<>(this,
-                        android.R.layout.simple_list_item_activated_1, opciones);
+                        R.layout.simple_menu_list_item, opciones);
 
         ndList.setAdapter(ndMenuAdapter);
 
@@ -110,13 +108,13 @@ public class MainActivity extends AppCompatActivity{
                 switch (pos) {
                     //TODO: Implementar los fragments para cada caso --> actualmente tira excepción
                     case 0:
-                        //fragment = new Fragment1();
+                        fragment = new TweetsFragment();
                         break;
                     case 1:
                         fragment = NoFollowerFragment.newInstance(id);
                         break;
                     case 2:
-                        //fragment = new Fragment3();
+                        fragment = new MapTrendsFragment();
                         break;
                 }
 
