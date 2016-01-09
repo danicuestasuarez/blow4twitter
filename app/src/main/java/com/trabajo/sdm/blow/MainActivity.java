@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.trabajo.sdm.blow.modules.MapTrendsFragment;
+import com.trabajo.sdm.blow.modules.MejoresMomentosFragment;
 import com.trabajo.sdm.blow.modules.NoFollowerFragment;
 import com.trabajo.sdm.blow.modules.TweetsFragment;
 import com.twitter.sdk.android.Twitter;
@@ -43,9 +44,11 @@ public class MainActivity extends AppCompatActivity{
     TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
     private Long id;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -76,10 +79,10 @@ public class MainActivity extends AppCompatActivity{
                         TextView bio = (TextView) findViewById(R.id.biografia);
                         URL url;
                         try {
-                            if (android.os.Build.VERSION.SDK_INT > 9) {
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-                            }
+//                            if (android.os.Build.VERSION.SDK_INT > 9) {
+//                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//                                StrictMode.setThreadPolicy(policy);
+//                            }
                             url = new URL(user.profileImageUrl.replace("normal","bigger"));
                             profileImg.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
                             name.setText(user.name + ": @" + session.getUserName());
@@ -92,7 +95,8 @@ public class MainActivity extends AppCompatActivity{
                     }
                 });
 
-        final String[] opciones = new String[]{"Tweets", "Quién no me sigue", "Influencias mundiales"};
+        final String[] opciones = new String[]{"Tweets", "Quién no me sigue",
+                "Influencias mundiales", "Mejores Momentos"};
 
         ArrayAdapter<String> ndMenuAdapter =
                 new ArrayAdapter<>(this,
@@ -116,7 +120,11 @@ public class MainActivity extends AppCompatActivity{
                     case 2:
                         fragment = new MapTrendsFragment();
                         break;
+                    case 3:
+                        fragment = new MejoresMomentosFragment();
+                        break;
                 }
+                drawerLayout.closeDrawer(sifl);
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, fragment)
@@ -125,8 +133,6 @@ public class MainActivity extends AppCompatActivity{
                 ndList.setItemChecked(pos, true);
 
                 getSupportActionBar().setTitle(opciones[pos]);
-
-                drawerLayout.closeDrawer(sifl);
             }
         });
 

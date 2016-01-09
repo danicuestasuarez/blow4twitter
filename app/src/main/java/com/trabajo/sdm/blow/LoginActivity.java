@@ -1,5 +1,6 @@
 package com.trabajo.sdm.blow;
 
+import com.trabajo.sdm.blow.modules.Twitter4JFactory;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -10,7 +11,9 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.models.User;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,8 +26,8 @@ public class LoginActivity extends Activity {
     private TwitterLoginButton loginButton;
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "0oq60RuAPhZiIZHSkdz7TxXa2";
-    private static final String TWITTER_SECRET = "lsJLDmsJUAmTjfgmQ2WtbWLB8MWzktmDENyf1JEJ0BSytraPIF";
+    private static final String TWITTER_KEY = "BRvBPIU1UQOI43cJEKly9gVth";
+    private static final String TWITTER_SECRET = "7900oxGF98Cbqb7P0ot5humKEqzLMrnM9Q9idEsa4EcjwHotPM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,9 @@ public class LoginActivity extends Activity {
         Fabric.with(this, new Twitter(authConfig));
         TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
 
-
         if (session != null){
+            Twitter4JFactory.generateInstance(TWITTER_KEY,TWITTER_SECRET,
+                    session.getAuthToken().token,session.getAuthToken().secret);
             Twitter.getApiClient(session).getAccountService()
                     .verifyCredentials(false, true, new com.twitter.sdk.android.core.Callback<User>() {
 
@@ -53,7 +57,9 @@ public class LoginActivity extends Activity {
                         }
                     });
         }
-        else loadLoginScreen();
+        else {
+            loadLoginScreen();
+        }
     }
 
     public void loadLoginScreen()
@@ -67,8 +73,18 @@ public class LoginActivity extends Activity {
                 // The TwitterSession is also available through:
                 // Twitter.getInstance().core.getSessionManager().getActiveSession()
                 TwitterSession session = result.data;
+
+                //Añadido para Twitter4j
+                Twitter4JFactory.generateInstance(TWITTER_KEY,TWITTER_SECRET,
+                        session.getAuthToken().token,session.getAuthToken().secret);
+
+                //Guardado en sharedpreferences el id de usuario
+                SharedPreferences sp = getSharedPreferences("blow", Context.MODE_PRIVATE);
+                sp.edit().putLong("id",session.getUserId()).commit();
+
                 // TODO: Remove toast and use the TwitterSession's userID
-                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
+//                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
+                String msg = "@" + session.getUserName() + " logged in! (#" + sp.getLong("id",0) + ")";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -78,6 +94,8 @@ public class LoginActivity extends Activity {
 
             @Override
             public void failure(TwitterException exception) {
+                Toast.makeText(getApplicationContext(),"No se ha podido conectar a Twitter," +
+                        " intentelo de nuevo",Toast.LENGTH_SHORT).show();
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
             }
         });
