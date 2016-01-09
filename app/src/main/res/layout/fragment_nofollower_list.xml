@@ -4,9 +4,9 @@
     android:layout_height="match_parent" tools:context="com.trabajo.sdm.blow.modules.NoFollowerFragment">
 
     <ListView android:id="@android:id/list" android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" android:descendantFocusability="blocksDescendants" android:focusable="false"/>
 
     <TextView android:id="@android:id/empty" android:layout_width="match_parent"
-        android:layout_height="match_parent" android:gravity="center" />
+        android:layout_height="match_parent" android:gravity="center"/>
 
 </FrameLayout>

@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity{
     private ActionBarDrawerToggle drawerToggle;
     private ListView ndList;
 
-
     TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+    private Long id;
 
 
     @Override
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity{
                     public void success(Result<User> userResult) {
 
                         User user = userResult.data;
+                        id=user.getId();
                         CircleImageView profileImg = (CircleImageView) findViewById(R.id.circleView);
                         TextView name = (TextView) findViewById(R.id.name);
                         TextView bio = (TextView) findViewById(R.id.biografia);
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity{
                         //fragment = new Fragment1();
                         break;
                     case 1:
-                        fragment = new NoFollowerFragment();
+                        fragment = NoFollowerFragment.newInstance(id);
                         break;
                     case 2:
                         //fragment = new Fragment3();
