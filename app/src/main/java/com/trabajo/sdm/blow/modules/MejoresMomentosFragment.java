@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,17 @@ public class MejoresMomentosFragment extends Fragment {
 
         best3 = (LinearLayout) globalView.findViewById(R.id.tweetBox3);
 
+        final SwipeRefreshLayout swipeLayout =
+                (SwipeRefreshLayout) globalView.findViewById(R.id.swipe_layout);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeLayout.setRefreshing(false);
+                loadTweets();
+            }
+        });
+
         //Mientras carga no se muestra
         globalView.setVisibility(View.INVISIBLE);
 
@@ -75,19 +87,23 @@ public class MejoresMomentosFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        dialog = new ProgressDialog(getActivity());
-        updateLoading(0);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-
         boolean isCached = getContext().getSharedPreferences("blow",Context.MODE_PRIVATE)
                 .getBoolean("cacheMejoresMomentos",false);
 
         if(isCached) {
             bestTweets = new BestTweets(true);
             updateView(best1,best2,best3);
-            return;
+        } else {
+            loadTweets();
         }
+    }
+
+    protected void loadTweets() {
+        //Crear el dialogo de carga
+        dialog = new ProgressDialog(getActivity());
+        updateLoading(0);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
         final Handler puente = new Handler(Looper.getMainLooper()) {
             @Override
@@ -120,17 +136,21 @@ public class MejoresMomentosFragment extends Fragment {
                     double statusCount = user.getStatusesCount();
                     int paginas = (int) Math.ceil(statusCount / 200.0);
 
+                    //Limite de 3000
+                    paginas = statusCount > 3000 ? 15 : paginas;
+
                     //TODO: si es menor de 3 dar excepcion o algo
                     //TODO: limite de 3200
 
                     bestTweets = new BestTweets(false);
                     int loadingCount = 0;
+                    int validTweets = 0;
                     Message msg;
 
                     //ahora iteramos sobre GET statuses/user_timeline
 //                    for (int i=1; i <= 1; i++){
                     for (int i=1; i <= paginas; i++){
-                    ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
+                        ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
 //                        ResponseList<Status> result = twitter.timelines().getUserTimeline("fabiomg13", new Paging(i, 200)); Sorry fabio, no tengo a otro pa hacer pruebas
                         msg = new Message();
                         msg.obj = (int) ((i * 100)/paginas);
@@ -138,17 +158,28 @@ public class MejoresMomentosFragment extends Fragment {
                         for (Status status : result) {
                             Log.i("Tweet","tweet #" + loadingCount);
                             loadingCount++;
-                            if(!status.isRetweet() && !status.isFavorited())
+                            if(!status.isRetweet() && !status.isFavorited()) {
+                                validTweets++;
                                 bestTweets.addTweet(status);
+                            }
                         }
-                        Log.i("Ejecucion","id:" + i);
+                        Log.i("Ejecucion", "id:" + i);
                     }
+
+                    final int valid = validTweets;
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            bestTweets.cacheResult();
-                            updateView(best1,best2,best3);
+                            if(valid < 3) {
+                                dialog.dismiss();
+                                Toast.makeText(getContext(),
+                                        "No tienes suficientes tweets todavia, ¡Cuentale algo al mundo!",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                bestTweets.cacheResult();
+                                updateView(best1, best2, best3);
+                            }
                         }
                     });
 
@@ -157,7 +188,7 @@ public class MejoresMomentosFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getContext(),"Se ha perdido la conexión con Twitter",Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(),"Se ha perdido la conexión con Twitter",Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -168,7 +199,11 @@ public class MejoresMomentosFragment extends Fragment {
     }
 
     protected void updateView(final ViewGroup l1, final ViewGroup l2, final ViewGroup l3) {
-        dialog.dismiss();
+        if(dialog != null)
+            dialog.dismiss();
+        l1.removeAllViewsInLayout();
+        l2.removeAllViewsInLayout();
+        l3.removeAllViewsInLayout();
         globalView.setVisibility(View.VISIBLE);
         final List<Long> tweets = bestTweets.getBestTweets();
         TweetUtils.loadTweets(bestTweets.getBestTweets(), new Callback<List<Tweet>>() {

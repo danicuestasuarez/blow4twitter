@@ -1,158 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content" android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:orientation="horizontal"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.trabajo.sdm.blow.modules.TweetsFragment">
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_layout">
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/header1">
+            android:layout_height="wrap_content">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
 
-            <ImageView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView"
-                android:src="@drawable/best1" />
-        </LinearLayout>
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/header1">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header1"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetBox1">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/best1" />
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweetBox1"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetTextLayout1">
-
-            <TextView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Retweets: 0"
-                android:id="@+id/retweets1" />
+                android:layout_below="@+id/header1"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetBox1">
 
-            <TextView
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Favoritos: 0"
-                android:id="@+id/favoritos1"
-                android:paddingLeft="20dp" />
-        </LinearLayout>
+                android:layout_below="@+id/tweetBox1"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetTextLayout1">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweetTextLayout1"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/header2"
-            android:paddingTop="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Retweets: 0"
+                    android:id="@+id/retweets1" />
 
-            <ImageView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Favoritos: 0"
+                    android:id="@+id/favoritos1"
+                    android:paddingLeft="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView2"
-                android:src="@drawable/best2" />
-        </LinearLayout>
+                android:layout_below="@+id/tweetTextLayout1"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/header2"
+                android:paddingTop="20dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header2"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetBox2">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/best2" />
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweetBox2"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetTextLayout2">
-
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Retweets: 0"
-                android:id="@+id/retweets2" />
+                android:layout_below="@+id/header2"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetBox2">
 
-            <TextView
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Favoritos: 0"
-                android:id="@+id/favoritos2"
-                android:paddingLeft="20dp" />
-        </LinearLayout>
+                android:layout_below="@+id/tweetBox2"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetTextLayout2">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweetTextLayout2"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/header3"
-            android:paddingTop="30dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Retweets: 0"
+                    android:id="@+id/retweets2" />
 
-            <ImageView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Favoritos: 0"
+                    android:id="@+id/favoritos2"
+                    android:paddingLeft="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imageView3"
-                android:src="@drawable/best3" />
-        </LinearLayout>
+                android:layout_below="@+id/tweetTextLayout2"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/header3"
+                android:paddingTop="30dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header3"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetBox3">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView3"
+                    android:src="@drawable/best3" />
+            </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tweetBox3"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/tweetTextLayout3"
-            android:paddingBottom="10dp">
-
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Retweets: 0"
-                android:id="@+id/retweets3" />
+                android:layout_below="@+id/header3"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetBox3">
 
-            <TextView
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Favoritos: 0"
-                android:id="@+id/favoritos3"
-                android:paddingLeft="20dp" />
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+                android:layout_below="@+id/tweetBox3"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tweetTextLayout3"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Retweets: 0"
+                    android:id="@+id/retweets3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Favoritos: 0"
+                    android:id="@+id/favoritos3"
+                    android:paddingLeft="20dp" />
+            </LinearLayout>
+        </RelativeLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</FrameLayout>
