@@ -14,6 +14,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -94,8 +96,14 @@ public class LoginActivity extends Activity {
 
             @Override
             public void failure(TwitterException exception) {
-                Toast.makeText(getApplicationContext(),"No se ha podido conectar a Twitter," +
-                        " intentelo de nuevo",Toast.LENGTH_SHORT).show();
+                ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo i = conMgr.getActiveNetworkInfo();
+                if(i == null) {
+                    Toast.makeText(LoginActivity.this,"No se ha podido conectar a Internet",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "No se ha podido conectar a Twitter," +
+                            " Intentelo de nuevo", Toast.LENGTH_SHORT).show();
+                }
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
             }
         });

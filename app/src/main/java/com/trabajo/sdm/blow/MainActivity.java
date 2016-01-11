@@ -1,6 +1,7 @@
 package com.trabajo.sdm.blow;
 
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity{
 
         ndList = (ListView)findViewById(R.id.navdrawerlist);
 
+        id = getSharedPreferences("blow", Context.MODE_PRIVATE).getLong("id",0);
 
         Twitter.getApiClient(session).getAccountService()
                 .verifyCredentials(false, true, new com.twitter.sdk.android.core.Callback<User>() {
