@@ -1,4 +1,4 @@
-package com.trabajo.sdm.blow.modules;
+package com.trabajo.sdm.blow.utility;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;

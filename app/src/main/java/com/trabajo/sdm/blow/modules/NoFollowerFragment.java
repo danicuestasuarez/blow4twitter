@@ -7,27 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
-import com.google.gson.annotations.SerializedName;
 import com.trabajo.sdm.blow.R;
+import com.trabajo.sdm.blow.utility.MyTwitterApiClient;
+import com.trabajo.sdm.blow.utility.TwitterUserAdapter;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.Query;
 
 /**
  * A fragment representing a list of Items.

@@ -1,6 +1,6 @@
 package com.trabajo.sdm.blow;
 
-import com.trabajo.sdm.blow.modules.Twitter4JFactory;
+import com.trabajo.sdm.blow.utility.Twitter4JFactory;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;

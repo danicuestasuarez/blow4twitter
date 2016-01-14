@@ -1,6 +1,5 @@
 package com.trabajo.sdm.blow.modules;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 
 import com.trabajo.sdm.blow.R;
 
+import com.trabajo.sdm.blow.utility.Twitter4JFactory;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.models.Tweet;

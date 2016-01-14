@@ -22,10 +22,16 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@drawable/blowdark"
+            android:id="@+id/menu_header"
+            android:layout_height="165dp"
             android:orientation="vertical"
             android:weightSum="1">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/menu_header_img"
+                android:scaleType="centerCrop"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,8 +70,8 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/blowdark"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/circleView"
                 />
         </RelativeLayout>
@@ -74,6 +80,7 @@
             android:id="@+id/navdrawerlist"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
             android:divider="@null"
             android:choiceMode="singleChoice" />
 

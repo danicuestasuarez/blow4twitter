@@ -4,6 +4,8 @@ package com.trabajo.sdm.blow;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -16,13 +18,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.trabajo.sdm.blow.modules.MapTrendsFragment;
 import com.trabajo.sdm.blow.modules.MejoresMomentosFragment;
 import com.trabajo.sdm.blow.modules.NoFollowerFragment;
 import com.trabajo.sdm.blow.modules.TweetsFragment;
+import com.trabajo.sdm.blow.utility.CustomList;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -30,6 +35,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.User;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -37,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
+    private ImageView header;
     private ScrimInsetsFrameLayout sifl;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -58,7 +65,7 @@ public class MainActivity extends AppCompatActivity{
         //Toolbar
         toolbar  = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
-
+        header  = (ImageView) findViewById(R.id.menu_header_img);
         //Menu del Navigation Drawer
 
         ndList = (ListView)findViewById(R.id.navdrawerlist);
@@ -87,8 +94,14 @@ public class MainActivity extends AppCompatActivity{
 //                            }
                             url = new URL(user.profileImageUrl.replace("normal","bigger"));
                             profileImg.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
+
                             name.setText(user.name + ": @" + session.getUserName());
+
                             bio.setText(user.description);
+                            url = new URL(user.profileBannerUrl);
+                            header.setImageBitmap(BitmapFactory.decodeStream(url.openConnection().getInputStream()));
+                            header.setColorFilter(new LightingColorFilter(0xff888888, 0x000000));
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -97,12 +110,21 @@ public class MainActivity extends AppCompatActivity{
                     }
                 });
 
-        final String[] opciones = new String[]{"Tweets", "Quién no me sigue",
-                "Influencias mundiales", "Mejores Momentos"};
+        final String[] opciones = new String[]{
+                "Tweets",
+                "Quién no me sigue",
+                "Influencias mundiales",
+                "Mejores Momentos"};
 
-        ArrayAdapter<String> ndMenuAdapter =
-                new ArrayAdapter<>(this,
-                        R.layout.simple_menu_list_item, opciones);
+        final Integer[] imageId = {
+                R.drawable.menu1,
+                R.drawable.menu2,
+                R.drawable.menu3,
+                R.drawable.menu4};
+
+        CustomList ndMenuAdapter =
+                new CustomList(this,
+                         opciones,imageId);
 
         ndList.setAdapter(ndMenuAdapter);
 
