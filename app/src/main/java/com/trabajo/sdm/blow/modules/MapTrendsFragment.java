@@ -1,5 +1,7 @@
 package com.trabajo.sdm.blow.modules;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -10,19 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,22 +38,11 @@ import com.twitter.sdk.android.core.models.Search;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.params.Geocode;
 import com.twitter.sdk.android.tweetui.FixedTweetTimeline;
-import com.twitter.sdk.android.tweetui.SearchTimeline;
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import twitter4j.GeoLocation;
-import twitter4j.Location;
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 
 
 public class MapTrendsFragment extends Fragment {
@@ -69,9 +61,11 @@ public class MapTrendsFragment extends Fragment {
 
     private LatLng currentGeoPos;
     private Marker currentMarker;
+    private int currentRadio = 1;
 
-    //Empty Constructor
-    public MapTrendsFragment(){}
+    public MapTrendsFragment(){
+        //Empty Constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,6 +83,7 @@ public class MapTrendsFragment extends Fragment {
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
+            //TODO
             e.printStackTrace();
         }
 
@@ -173,30 +168,16 @@ public class MapTrendsFragment extends Fragment {
 
     protected void loadQuery(String query) {
         try {
-            List<Address> addresses = geocoder.getFromLocationName(query, 1);
+            List<Address> addresses = geocoder.getFromLocationName(query, 5);
 
             if(addresses.size() == 0) {
-                Toast.makeText(getContext(),"No se ha encontrado el lugar",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),R.string.MT_noLugar,Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Address address = addresses.get(0);
-            currentGeoPos = new LatLng(address.getLatitude(),address.getLongitude());
-
-            //Actualizar mapa
-            if(currentMarker != null)
-                currentMarker.remove();
-
-            //Add marker
-            currentMarker = googleMap.addMarker(new MarkerOptions().position(currentGeoPos));
-
-            //centrar camara
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentGeoPos,5));
-
-            updateTimeline(mListView, twitterApiClient);
-
+            generarDialog(addresses);
         } catch (IOException e) {
-            Toast.makeText(getContext(),"Se ha perdido la conexión",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),R.string.MT_noConection,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -204,7 +185,7 @@ public class MapTrendsFragment extends Fragment {
         tweets.setVisibility(View.VISIBLE);
 
         twitterApiClient.getSearchService().tweets("",
-                new Geocode(currentGeoPos.latitude, currentGeoPos.longitude, 50, Geocode.Distance.KILOMETERS),
+                new Geocode(currentGeoPos.latitude, currentGeoPos.longitude, currentRadio, Geocode.Distance.KILOMETERS),
                 null, null, "mixed", 100, null, null, null, true, new Callback<Search>() {
                     @Override
                     public void success(Result<Search> result) {
@@ -223,5 +204,75 @@ public class MapTrendsFragment extends Fragment {
                     }
                 });
 
+    }
+
+    private void updateMap(Address address, int radio){
+        currentGeoPos = new LatLng(address.getLatitude(),address.getLongitude());
+
+        //Actualizar mapa
+        if(currentMarker != null)
+            currentMarker.remove();
+
+        //Add marker
+        currentMarker = googleMap.addMarker(new MarkerOptions().position(currentGeoPos));
+
+        //centrar camara
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentGeoPos,5));
+
+        currentRadio = radio;
+        updateTimeline(mListView, twitterApiClient);
+    }
+
+    private void generarDialog(final List<Address> list){
+        //Cargar layout
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View layout = inflater.inflate(R.layout.dialog_list, null);
+        final Spinner spinner= (Spinner) layout.findViewById(R.id.dialog_spinner);
+
+        List<String> addresses = new LinkedList<>();
+        for(Address a:list){
+            addresses.add(a.getAddressLine(0) + ", " +a.getAddressLine(1));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_list_item_1,addresses);
+
+        spinner.setAdapter(adapter);
+
+        final SeekBar seekBar = (SeekBar) layout.findViewById(R.id.seekBar);
+        final TextView actual = (TextView) layout.findViewById(R.id.actual);
+        seekBar.incrementProgressBy(1);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int actualProgress = progress + 1;
+                actual.setText(progress + "Km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        //Generar dialogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(layout);
+
+        builder.setTitle(R.string.MT_dialogTitle);
+        builder.setPositiveButton(R.string.MT_buscarTweets, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                updateMap(list.get(spinner.getSelectedItemPosition()),seekBar.getProgress());
+            }
+        });
+        builder.show();
     }
 }

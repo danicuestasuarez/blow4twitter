@@ -2,6 +2,7 @@ package com.trabajo.sdm.blow.modules;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,6 +44,7 @@ import twitter4j.User;
 public class MejoresMomentosFragment extends Fragment {
 
     private BestTweets bestTweets;
+    private TweetAnalyst analyst;
 
     private ViewGroup best1;
     private ViewGroup best2;
@@ -52,7 +54,9 @@ public class MejoresMomentosFragment extends Fragment {
 
     private View globalView;
 
-    public MejoresMomentosFragment() {}
+    public MejoresMomentosFragment() {
+        //Empty Constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,125 +91,67 @@ public class MejoresMomentosFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        boolean isCached = getContext().getSharedPreferences("blow",Context.MODE_PRIVATE)
-                .getBoolean("cacheMejoresMomentos",false);
-
-        if(isCached) {
-            bestTweets = new BestTweets(true);
-            updateView(best1,best2,best3);
+        SharedPreferences sp = getContext().getSharedPreferences("blow",Context.MODE_PRIVATE);
+        boolean isCached = sp.getBoolean("cacheMejoresMomentos",false);
+        if(!isCached) {
+            Log.i("Cache", "Cache de Mejores Momentos NO encontrado");
+            loadTweets();
         } else {
+            long idCache = sp.getLong("cacheMejoresMomentosID",0);
+            long id = sp.getLong("id",0);
+            if(idCache == id){
+                Log.i("Cache","Cache de Mejores Momentos encontrado");
+                bestTweets = new BestTweets(true);
+                updateView(best1,best2,best3);
+            }
+            Log.i("Cache", "Cache de Mejores Momentos NO encontrado");
             loadTweets();
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(analyst != null) {
+            analyst.kill();
+        }
+        if(dialog != null){
+            dialog.dismiss();
+        }
+    }
+
     protected void loadTweets() {
+        Log.i("MejoresMomentos", "Inicando analisis de tweets");
+        //Mantener ventana para que no se cierre
+        globalView.setKeepScreenOn(true);
+
         //Crear el dialogo de carga
         dialog = new ProgressDialog(getActivity());
         updateLoading(0);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        final Handler puente = new Handler(Looper.getMainLooper()) {
+        analyst = new TweetAnalyst();
+        final Thread thread = new Thread(analyst);
+
+        //Mata el Thread cuando se da a atras
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
-            public void handleMessage(Message msg) {
-                updateLoading((int) msg.obj);
-            }
-        };
-
-        //TODO: pantalla de carga
-        //TODO: excepciones en worker
-        //En este caso no existe limite de peticiones asi que ok
-
-        Thread worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread thread, Throwable e) {
-                        Log.i("Thread", "Exception: " + e);
-                    }
-                });
-
-                try {
-                    Twitter twitter = Twitter4JFactory.getInstance();
-
-                    long id = getContext().getSharedPreferences("blow", Context.MODE_PRIVATE)
-                            .getLong("id", 0);
-                    User user = twitter.showUser(id);
-//                    User user = twitter.showUser("fabiomg13");
-                    double statusCount = user.getStatusesCount();
-                    int paginas = (int) Math.ceil(statusCount / 200.0);
-
-                    //Limite de 3000
-                    paginas = statusCount > 3000 ? 15 : paginas;
-
-                    //TODO: si es menor de 3 dar excepcion o algo
-                    //TODO: limite de 3200
-
-                    bestTweets = new BestTweets(false);
-                    int loadingCount = 0;
-                    int validTweets = 0;
-                    Message msg;
-
-                    //ahora iteramos sobre GET statuses/user_timeline
-//                    for (int i=1; i <= 1; i++){
-                    for (int i=1; i <= paginas; i++){
-                        ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
-//                        ResponseList<Status> result = twitter.timelines().getUserTimeline("fabiomg13", new Paging(i, 200)); Sorry fabio, no tengo a otro pa hacer pruebas
-                        msg = new Message();
-                        msg.obj = (int) ((i * 100)/paginas);
-                        puente.sendMessage(msg);
-                        for (Status status : result) {
-                            Log.i("Tweet","tweet #" + loadingCount);
-                            loadingCount++;
-                            if(!status.isRetweet() && !status.isFavorited()) {
-                                validTweets++;
-                                bestTweets.addTweet(status);
-                            }
-                        }
-                        Log.i("Ejecucion", "id:" + i);
-                    }
-
-                    final int valid = validTweets;
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(valid < 3) {
-                                dialog.dismiss();
-                                Toast.makeText(getContext(),
-                                        "No tienes suficientes tweets todavia, ¡Cuentale algo al mundo!",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                bestTweets.cacheResult();
-                                updateView(best1, best2, best3);
-                            }
-                        }
-                    });
-
-                }catch(TwitterException e) {
-                    Log.i("FalloTwitter","Twitter ha fallado");
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(),"Se ha perdido la conexión con Twitter",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+            public void onCancel(DialogInterface dialog) {
+                analyst.kill();
             }
         });
-
-        worker.start();
+        thread.start();
     }
 
+    //TODO: placeholder
     protected void updateView(final ViewGroup l1, final ViewGroup l2, final ViewGroup l3) {
-        if(dialog != null)
-            dialog.dismiss();
+        //Limpiar de previos ajustes
         l1.removeAllViewsInLayout();
         l2.removeAllViewsInLayout();
         l3.removeAllViewsInLayout();
+
         globalView.setVisibility(View.VISIBLE);
-        final List<Long> tweets = bestTweets.getBestTweets();
         TweetUtils.loadTweets(bestTweets.getBestTweets(), new Callback<List<Tweet>>() {
             @Override
             public void success(Result<List<Tweet>> result) {
@@ -237,15 +183,132 @@ public class MejoresMomentosFragment extends Fragment {
 
             @Override
             public void failure(com.twitter.sdk.android.core.TwitterException e) {
-                Toast.makeText(getContext(), "Fallo de Twitter", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.MM_lost, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     protected void updateLoading(int loading) {
-        dialog.setMessage("Analizando tus twits: " + loading + "%.");
+        dialog.setMessage(String.format(getResources().getString(R.string.MM_analisis), loading));
     }
 
+    class TweetAnalyst implements Runnable {
+
+        //por alguna razon, no se muere bien
+        private boolean isKill = false;
+
+        public void kill() {
+            //Ya no se mantiene la ventana
+            globalView.setKeepScreenOn(false);
+            isKill = true;
+        }
+
+        //Aqui aparece un warning pero en la explicación dice claramente
+        //Que en este caso no hay problemas
+        final Handler puente = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                updateLoading(msg.what);
+            }
+        };
+
+        @Override
+        public void run() {
+            //Para no cerrar la aplicación en caso de fallo
+            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread thread, Throwable e) {
+                    Log.e("ThreadException", "Exception: ", e);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(),
+                                    R.string.MM_uncaught, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+
+            try {
+                Twitter twitter = Twitter4JFactory.getInstance();
+
+                long id = getContext().getSharedPreferences("blow", Context.MODE_PRIVATE)
+                        .getLong("id", 0);
+//                    User user = twitter.showUser(id);
+                User user = twitter.showUser("fabiomg13");
+                double statusCount = user.getStatusesCount();
+                int paginas = (int) Math.ceil(statusCount / 200.0);
+
+                //Limite de 3000
+                paginas = statusCount > 3000 ? 15 : paginas;
+
+                bestTweets = new BestTweets(false);
+                int validTweets = 0;
+
+                if(isKill)
+                    return;
+
+                //ahora iteramos sobre GET statuses/user_timeline
+                for (int i=1; i <= paginas; i++){
+                    if(isKill)
+                        return;
+
+                    Log.i("TweetBatch","Tweet Batch #" + i + "/" + paginas + "...Started");
+//                        ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
+                    ResponseList<Status> result = twitter.timelines().getUserTimeline("fabiomg13", new Paging(i, 200)); //Sorry fabio, no tengo a otro pa hacer pruebas
+                    puente.sendEmptyMessage(((i * 100) / paginas));
+
+                    for (Status status : result) {
+                        //Solo se admiten tweets del usuario
+                        if(!status.isRetweet() && !status.isFavorited()) {
+                            validTweets++;
+                            bestTweets.addTweet(status);
+                        }
+                    }
+                    Log.i("TweetBatch","Tweet Batch #" + i + "/" + paginas + "...Completed");
+                    if(isKill)
+                        return;
+                }
+
+                final int valid = validTweets;
+
+                if(isKill)
+                    return;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                        //Ya no se mantiene la ventana
+                        globalView.setKeepScreenOn(false);
+                        if(valid < 3) {
+                            Toast.makeText(getContext(),
+                                    R.string.MM_minimo,
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            bestTweets.cacheResult();
+                            updateView(best1, best2, best3);
+                        }
+                    }
+                });
+
+            }catch(TwitterException e) {
+                Log.i("Twitter", "Twitter ha fallado");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                        //Ya no se mantiene la ventana
+                        globalView.setKeepScreenOn(false);
+                        Toast.makeText(getContext(),R.string.MM_lost,Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     * Clase interna para controlar los 3 mejores tweets
+     */
     class BestTweets {
         private long[] tweets = new long[3];
         private long[] values = new long[3];
@@ -294,12 +357,19 @@ public class MejoresMomentosFragment extends Fragment {
         }
 
         public void cacheResult() {
-            SharedPreferences.Editor edit = getContext()
-                    .getSharedPreferences("blow", Context.MODE_PRIVATE).edit();
-            edit.putLong("bestTweet1",tweets[0]).apply();
-            edit.putLong("bestTweet2",tweets[1]).apply();
+            Log.i("Cache","Guardado cache Mejores Momentos");
+            SharedPreferences sp = getContext()
+                    .getSharedPreferences("blow", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = sp.edit();
+            edit.putBoolean("cacheMejoresMomentos", false).commit();
+
+            edit.putLong("bestTweet1", tweets[0]).apply();
+            edit.putLong("bestTweet2", tweets[1]).apply();
             edit.putLong("bestTweet3",tweets[2]).apply();
 
+            long id = sp.getLong("id",0);
+
+            edit.putLong("cacheMejoresMomentosID",id).apply();
             edit.putBoolean("cacheMejoresMomentos",true).apply();
         }
 
@@ -310,5 +380,4 @@ public class MejoresMomentosFragment extends Fragment {
             return result;
         }
     }
-
 }

@@ -22,4 +22,17 @@
     <string name="title_sectionInfluenciasMundiales">Influencias Mundiales</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Mejores Momentos -->
+    <string name="MM_uncaught">No se han podido recuperar los tweets</string>
+    <string name="MM_minimo">No tienes suficientes tweets todavia, ¡Cuentale algo al mundo!</string>
+    <string name="MM_lost">Se ha perdido la conexión con Twitter</string>
+    <string name="MM_analisis">Analizando tus twits: %1$d %%</string>
+
+    <!-- Map Trends -->
+    <string name="MT_noLugar">No se ha encontrado ningún lugar con ese nombre</string>
+    <string name="MT_tooltip">Busca un lugar</string>
+    <string name="MT_noConection">Se ha perdido la conexión</string>
+    <string name="MT_dialogTitle">Selecciona un lugar</string>
+    <string name="MT_buscarTweets">Buscar Tweets</string>
 </resources>
