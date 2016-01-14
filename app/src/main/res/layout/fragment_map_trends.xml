@@ -37,14 +37,25 @@
                 android:layout_height="match_parent" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/geo_tweets"
+        android:layout_alignParentEnd="true"
+        android:background="#c8c8c8"
+        android:id="@+id/cancelar_view">
+
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="25dp"
             android:layout_height="29dp"
             android:id="@+id/button"
-            android:layout_gravity="right|top"
+            android:layout_gravity="end|top"
             android:background="@drawable/tw__composer_close" />
-    </FrameLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>

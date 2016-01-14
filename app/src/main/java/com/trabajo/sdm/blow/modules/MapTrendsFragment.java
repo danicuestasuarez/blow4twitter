@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SeekBar;
@@ -50,6 +51,7 @@ public class MapTrendsFragment extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
     private SearchView mSearchView;
+    private ViewGroup cancel;
 
     private Geocoder geocoder;
     private TwitterApiClient twitterApiClient;
@@ -83,12 +85,29 @@ public class MapTrendsFragment extends Fragment {
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
-            //TODO
-            e.printStackTrace();
+            Toast.makeText(getContext(),R.string.MT_noConection,Toast.LENGTH_LONG).show();
         }
 
         googleMap = mMapView.getMap();
         // Perform any camera updates here
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                try {
+                    List<Address> adds =geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    if(adds.size() == 0){
+                        Toast.makeText(getContext(),R.string.MT_placeUnknown,Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Address address = adds.get(0);
+                    mSearchView.setQuery(address.getAddressLine(0) +", " + address.getAddressLine(1),false);
+                    updateMap(address,15);
+                } catch (IOException e) {
+                    Toast.makeText(getContext(),R.string.MT_noConection,Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         //Toma el layout actualizable deslizando hacia arriba
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
@@ -127,18 +146,24 @@ public class MapTrendsFragment extends Fragment {
         });
 
         tweets = (FrameLayout) v.findViewById(R.id.geo_tweets);
+        cancel = (LinearLayout) v.findViewById(R.id.cancelar_view);
 
         //Boton cancelar
         Button cancelar = (Button) v.findViewById(R.id.button);
         cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cancel.setVisibility(View.INVISIBLE);
+                cancel.animate().translationY(tweets.getHeight() + cancel.getHeight());
                 tweets.setVisibility(View.INVISIBLE);
+                tweets.animate().translationY(tweets.getHeight());
             }
         });
 
         tweets.setVisibility(View.INVISIBLE);
-
+        tweets.animate().translationY(tweets.getHeight());
+        cancel.setVisibility(View.INVISIBLE);
+        cancel.animate().translationY(tweets.getHeight() + cancel.getHeight());
         return v;
     }
 
@@ -183,7 +208,9 @@ public class MapTrendsFragment extends Fragment {
 
     private void updateTimeline(final ListView list, TwitterApiClient twitterApiClient) {
         tweets.setVisibility(View.VISIBLE);
-
+        tweets.animate().translationY(0);
+        cancel.setVisibility(View.VISIBLE);
+        cancel.animate().translationY(0);
         twitterApiClient.getSearchService().tweets("",
                 new Geocode(currentGeoPos.latitude, currentGeoPos.longitude, currentRadio, Geocode.Distance.KILOMETERS),
                 null, null, "mixed", 100, null, null, null, true, new Callback<Search>() {
@@ -217,7 +244,7 @@ public class MapTrendsFragment extends Fragment {
         currentMarker = googleMap.addMarker(new MarkerOptions().position(currentGeoPos));
 
         //centrar camara
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentGeoPos,5));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentGeoPos,7));
 
         currentRadio = radio;
         updateTimeline(mListView, twitterApiClient);
@@ -248,17 +275,17 @@ public class MapTrendsFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int actualProgress = progress + 1;
-                actual.setText(progress + "Km");
+                actual.setText(actualProgress + "Km");
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                //No se necesita
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                //No se necesita
             }
         });
 
@@ -270,7 +297,7 @@ public class MapTrendsFragment extends Fragment {
         builder.setPositiveButton(R.string.MT_buscarTweets, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                updateMap(list.get(spinner.getSelectedItemPosition()),seekBar.getProgress());
+                updateMap(list.get(spinner.getSelectedItemPosition()),seekBar.getProgress() + 1);
             }
         });
         builder.show();

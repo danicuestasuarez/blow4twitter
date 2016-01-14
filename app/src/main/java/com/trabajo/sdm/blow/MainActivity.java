@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -117,10 +118,10 @@ public class MainActivity extends AppCompatActivity{
                 "Mejores Momentos"};
 
         final Integer[] imageId = {
-                R.drawable.menu1,
+                R.drawable.tw__composer_logo_blue,
                 R.drawable.menu2,
                 R.drawable.menu3,
-                R.drawable.menu4};
+                android.R.drawable.btn_star_big_off};
 
         CustomList ndMenuAdapter =
                 new CustomList(this,
@@ -170,6 +171,9 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                //Cierra el teclado si se abre
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
                 super.onDrawerOpened(drawerView);
             }
 

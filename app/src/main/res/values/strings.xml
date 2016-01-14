@@ -35,4 +35,6 @@
     <string name="MT_noConection">Se ha perdido la conexión</string>
     <string name="MT_dialogTitle">Selecciona un lugar</string>
     <string name="MT_buscarTweets">Buscar Tweets</string>
+    <string name="MT_placeUnknown">Ahi probablemente no exista nigún twitero.
+        Pero si buscas al Yeti o a Wally, puede ser un buen lugar.</string>
 </resources>
