@@ -103,9 +103,10 @@ public class MejoresMomentosFragment extends Fragment {
                 Log.i("Cache","Cache de Mejores Momentos encontrado");
                 bestTweets = new BestTweets(true);
                 updateView(best1,best2,best3);
+            } else {
+                Log.i("Cache", "Cache de Mejores Momentos NO encontrado");
+                loadTweets();
             }
-            Log.i("Cache", "Cache de Mejores Momentos NO encontrado");
-            loadTweets();
         }
     }
 
@@ -234,8 +235,8 @@ public class MejoresMomentosFragment extends Fragment {
 
                 long id = getContext().getSharedPreferences("blow", Context.MODE_PRIVATE)
                         .getLong("id", 0);
-//                    User user = twitter.showUser(id);
-                User user = twitter.showUser("fabiomg13");
+                User user = twitter.showUser(id);
+//                User user = twitter.showUser("fabiomg13");
                 double statusCount = user.getStatusesCount();
                 int paginas = (int) Math.ceil(statusCount / 200.0);
 
@@ -254,8 +255,8 @@ public class MejoresMomentosFragment extends Fragment {
                         return;
 
                     Log.i("TweetBatch","Tweet Batch #" + i + "/" + paginas + "...Started");
-//                        ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
-                    ResponseList<Status> result = twitter.timelines().getUserTimeline("fabiomg13", new Paging(i, 200)); //Sorry fabio, no tengo a otro pa hacer pruebas
+                        ResponseList<Status> result = twitter.timelines().getUserTimeline(id, new Paging(i, 200));
+//                    ResponseList<Status> result = twitter.timelines().getUserTimeline("fabiomg13", new Paging(i, 200)); //Sorry fabio, no tengo a otro pa hacer pruebas
                     puente.sendEmptyMessage(((i * 100) / paginas));
 
                     for (Status status : result) {
